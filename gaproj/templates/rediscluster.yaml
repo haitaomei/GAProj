@@ -45,14 +45,14 @@ spec:
   selector:
     app: redis-cluster
 ---
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: apps/v1beta2
+kind: Deployment
 metadata:
   name: redis-cluster
   labels:
     app: redis-cluster
 spec:
-  serviceName: redis-cluster
+  # serviceName: redis-cluster
   replicas: {{ .Values.redis.redisreplica }}
   selector:
     matchLabels:
@@ -96,23 +96,23 @@ spec:
         - name: conf
           mountPath: /conf
           readOnly: false
-        - name: data
-          mountPath: /data
-          readOnly: false
+        # - name: data
+        #   mountPath: /data
+        #   readOnly: false
       volumes:
       - name: conf
         configMap:
           name: redis-cluster
           defaultMode: 0755
-  volumeClaimTemplates:
-  - metadata:
-      name: data
-      labels:
-        name: redis-cluster
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 100Mi
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: data
+  #     labels:
+  #       name: redis-cluster
+  #   spec:
+  #     accessModes: [ "ReadWriteOnce" ]
+  #     resources:
+  #       requests:
+  #         storage: 100Mi
 
 # This Yaml file is Based on https://github.com/sanderploegsma/redis-cluster/blob/master/redis-cluster.yml
