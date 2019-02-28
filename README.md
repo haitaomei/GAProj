@@ -31,9 +31,7 @@ Then type `kubectl get pod`, you will see:
         redis-cluster-788d7c769c-x6fq6   0/1       ContainerCreating   0          26s
         ......
 
-Wait all redis container online, make a note of the name of the first redis container, in this case it's `redis-cluster-788d7c769c-64p45`.
-
-Then type 
+Wait all redis container online, then type 
 
 `kubectl exec -it $(kubectl get pods | grep -m1 redis | awk ' { print $1 } ') -- redis-cli --cluster create --cluster-replicas 1 $(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]}{.status.podIP}:6379 ')` 
 
