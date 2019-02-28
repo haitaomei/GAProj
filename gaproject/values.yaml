@@ -1,2 +1,4 @@
 redis:
   redisreplica: 6
+
+gaserverdockerimage: "khitaomei/gasrv:latest"

@@ -34,14 +34,12 @@ metadata:
   labels:
     app: redis-cluster
 spec:
+  type: ClusterIP
   ports:
   - port: 6379
-    targetPort: 6379
     name: client
   - port: 16379
-    targetPort: 16379
     name: gossip
-  clusterIP: None
   selector:
     app: redis-cluster
 ---

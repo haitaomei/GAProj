@@ -15,28 +15,28 @@ import (
 
 //OnlineServers ...
 type OnlineServers struct {
-	Servers []string // `json:"option_A"`
+	Servers []string
 }
 
-func main() { //docker run -d -p 6379:6379 redis
+func main() {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     "redis-cluster.default.svc.cluster.local:6379", //redis-cluster.default.svc.cluster.local:6379
 		Password: "",
-		DB:       1,
+		// DB:       1,
 	})
 
 	// pong, err := client.Ping().Result()
 
-	err := client.Set("Server1", "192.168.0.9", 0).Err()
+	err := client.Set("key1", "value1", 0).Err()
 	if err != nil {
 		panic(err)
 	}
 
-	val, err := client.Get("Server1").Result()
+	val, err := client.Get("key1").Result()
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Server1", val)
+	fmt.Println("key1", val)
 
 	val2, err := client.Get("key2").Result()
 	if err == redis.Nil {
