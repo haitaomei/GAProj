@@ -13,6 +13,7 @@ import (
 
 // docker run --name recorder-redis -p 6379:6379 -d redis to debug locally
 
+//OnlineServers ...
 type OnlineServers struct {
 	Servers []string // `json:"option_A"`
 }
