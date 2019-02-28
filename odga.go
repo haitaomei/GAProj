@@ -6,23 +6,68 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net/http"
 	"strings"
 
 	"github.com/go-redis/redis"
+	"github.com/gorilla/mux"
 )
 
-// docker run --name recorder-redis -p 6379:6379 -d redis to debug locally
+/**
+REST API expose: http://gaserver-svc.default.svc.cluster.local:9090
+*/
+func main() {
+	testRedis()
 
+	router := mux.NewRouter()
+
+	rootRouter := router.PathPrefix("/").Subrouter()
+	rootRouter.HandleFunc("/", rootHandler).Methods("GET")
+
+	helloRouter := router.PathPrefix("/helloAPI").Subrouter()
+	helloRouter.HandleFunc("/{name}", helloHandler).Methods("GET")
+
+	http.Handle("/", router)
+	http.ListenAndServe(":9090", nil) //standard http
+}
+
+func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+
+	httpResp.Header().Add("Content-Type", "application/json")
+	httpResp.WriteHeader(200)
+	json.NewEncoder(httpResp).Encode("Welcome to the root directory ...")
+}
+
+func helloHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+	vars := mux.Vars(httpReq)
+	username := vars["name"]
+	var responseText = "Hi " + username + ", how are you?"
+
+	httpResp.Header().Add("Content-Type", "application/json")
+	httpResp.WriteHeader(200)
+	json.NewEncoder(httpResp).Encode(responseText)
+}
+
+/*
+
+
+
+
+
+
+
+ */
+// docker run --name recorder-redis -p 6379:6379 -d redis to debug locally
 //OnlineServers ...
 type OnlineServers struct {
 	Servers []string
 }
 
-func main() {
+func testRedis() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "redis-master.default.svc.cluster.local:6379",
 		Password: "",
-		// DB:       1,
+		DB:       1,
 	})
 
 	// pong, err := client.Ping().Result()
@@ -69,5 +114,4 @@ func main() {
 		}
 		fmt.Println(m)
 	}
-
 }
