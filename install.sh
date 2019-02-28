@@ -1,3 +1,3 @@
 #!/bin/bash
 
-helm install --name ga-project gaproj
+helm install --name ga-project gaproject

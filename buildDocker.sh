@@ -4,5 +4,10 @@ source config.sh
 
 docker login -u ${userName} -p ${passWd}
 
-# docker build -t khitaomei/travis-ci:${TRAVIS_BUILD_NUMBER} .
-# docker push khitaomei/travis-ci:${TRAVIS_BUILD_NUMBER}
+rm -rf GAProj
+GOOS=linux go build
+
+docker build -t ${gaProjectDockerIamge}:latest .
+docker push ${gaProjectDockerIamge}:latest
+
+rm -rf GAProj

@@ -13,12 +13,6 @@ Create a Kubernetes clsuter in IBM Kubernetes Service, and install CLI according
 ======
 After the cluster online, and setting up the CLI, then type `helm init` to initialise Helm.
 
-Build Docker images
-======
-Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password 
-
-Run `buildDocker.sh`
-
 
 Install Project into Kubernetes Cluster
 ======
@@ -48,3 +42,14 @@ Exported service url is `redis-cluster.svc.cluster.local:6379`
 Delete Project from Kubernetes Cluster
 ======
 Run `cleanup.sh`
+
+
+
+
+Build Docker images (Optional)
+======
+Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
+
+Move the directory of this project into your $GOPATH/src/
+
+Run `buildDocker.sh`

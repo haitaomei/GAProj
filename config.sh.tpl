@@ -2,3 +2,4 @@
 
 export userName=''
 export passWd=''
+export gaProjectDockerIamge=''
