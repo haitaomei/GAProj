@@ -20,7 +20,7 @@ type OnlineServers struct {
 
 func main() {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "redis-cluster.default.svc.cluster.local:6379", //redis-cluster.default.svc.cluster.local:6379
+		Addr:     "redis-master.default.svc.cluster.local:6379",
 		Password: "",
 		// DB:       1,
 	})

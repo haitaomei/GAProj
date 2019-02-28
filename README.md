@@ -18,7 +18,7 @@ Install Project into Kubernetes Cluster
 ======
 Run `install.sh`
 
-Configure Redis Cluster
+<!-- Configure Redis Cluster
 ----
 Then type `kubectl get pod`, you will see:
 
@@ -39,7 +39,7 @@ to set up the redis cluster.
 
 By default, there will be 3 master nodes, and 3 slave nodes. Config `gaproj/values.yaml` to configure the total number of instances.
 
-Exported service url is `redis-cluster.default.svc.cluster.local:6379`
+Exported service url is `redis-cluster.default.svc.cluster.local:6379` -->
 
 Delete Project from Kubernetes Cluster
 ======
