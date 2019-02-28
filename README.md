@@ -18,6 +18,8 @@ Install Project into Kubernetes Cluster
 ======
 Run `install.sh`
 
+For now we use a single redis instance. If we set up Redis cluster on Kubernetes without persistent storage, it makes no sense.
+
 <!-- Configure Redis Cluster
 ----
 Then type `kubectl get pod`, you will see:
