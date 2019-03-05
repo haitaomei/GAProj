@@ -19,7 +19,7 @@ to debug locally
 */
 
 var client *redis.Client
-var res string
+var islands = make([]string, 0)
 
 func main() {
 	// init db
