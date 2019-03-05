@@ -1,14 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
-	"strings"
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
@@ -16,10 +12,21 @@ import (
 
 /**
 REST API expose: http://gaserver-svc.default.svc.cluster.local:9090
-*/
-func main() {
-	// testRedis()
 
+Using
+docker run --name recorder-redis -p 6379:6379 -d redis
+to debug locally
+*/
+
+var client *redis.Client
+
+func main() {
+	// init db
+	client = redis.NewClient(&redis.Options{
+		Addr:     "redis-master.default.svc.cluster.local:6379",
+		Password: "",
+		DB:       1,
+	})
 	router := mux.NewRouter()
 
 	rootRouter := router.PathPrefix("/").Subrouter()
@@ -32,7 +39,8 @@ func main() {
 	pollRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 
 	http.Handle("/", router)
-	http.ListenAndServe(":9090", nil) //standard http
+	http.ListenAndServe(":9090", nil)
+
 }
 
 func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
@@ -47,83 +55,28 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 
 	body, _ := ioutil.ReadAll(httpReq.Body)
-	fmt.Println("Received push request, id=", islandID, "body:", body)
+	fmt.Println("Received push request, going to save into db\n\tid=", islandID, "body:", body)
 
-	httpResp.Header().Add("Content-Type", "application/json")
-	httpResp.WriteHeader(200)
-	fmt.Fprintf(httpResp, "%s", body)
+	//save to db
+	err := client.Set(islandID, body, 0).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
 	islandID := vars["name"]
-	fmt.Println(islandID)
-}
-
-/*
-
-
-
-
-
-
-
- */
-// docker run --name recorder-redis -p 6379:6379 -d redis to debug locally
-//OnlineServers ...
-type OnlineServers struct {
-	Servers []string
-}
-
-func testRedis() {
-	client := redis.NewClient(&redis.Options{
-		Addr:     "redis-master.default.svc.cluster.local:6379",
-		Password: "",
-		DB:       1,
-	})
-
-	// pong, err := client.Ping().Result()
-
-	err := client.Set("key1", "value1", 0).Err()
-	if err != nil {
-		panic(err)
-	}
-
-	val, err := client.Get("key1").Result()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("key1", val)
-
-	val2, err := client.Get("key2").Result()
+	fmt.Println("Received poll request, going to save into db\n\tid=", islandID)
+	//read from db
+	val2, err := client.Get(islandID).Result()
 	if err == redis.Nil {
 		fmt.Println("key2 does not exist")
 	} else if err != nil {
-		panic(err)
+		fmt.Println(err)
 	} else {
-		fmt.Println("key2", val2)
-	}
-
-	var testsvrs []string
-	testsvrs = append(testsvrs, "localhost")
-	testsvrs = append(testsvrs, "localhost2")
-	testsvrs = append(testsvrs, "localhost3")
-	osvrs := &OnlineServers{
-		Servers: testsvrs,
-	}
-	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(osvrs)
-	client.Set("ServerList", b.String(), 0)
-	val3, err := client.Get("ServerList").Result()
-
-	dec := json.NewDecoder(strings.NewReader(val3))
-	for {
-		var m OnlineServers
-		if err := dec.Decode(&m); err == io.EOF {
-			break
-		} else if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(m)
+		httpResp.Header().Add("Content-Type", "application/json")
+		httpResp.WriteHeader(200)
+		fmt.Fprintf(httpResp, "%s", val2)
 	}
 }
