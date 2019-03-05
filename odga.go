@@ -57,7 +57,7 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 
 	body, _ := ioutil.ReadAll(httpReq.Body)
-	fmt.Println("Received push request, going to save into db\n\tid=", islandID, "body:", body)
+	fmt.Println("Received a push request, going to save into db\tid=", islandID, "body:", body)
 	// save to db
 	err := client.Set(islandID, string(body), 0).Err()
 	if err != nil {
@@ -68,11 +68,11 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
 	islandID := vars["name"]
-	fmt.Println("Received poll request, going to save into db\n\tid=", islandID)
+	fmt.Println("Received a poll request, id=", islandID)
 	//read from db
 	val2, err := client.Get(islandID).Result()
 	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
+		fmt.Println(islandID, " does not exist")
 	} else if err != nil {
 		fmt.Println(err)
 	} else {

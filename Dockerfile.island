@@ -4,4 +4,4 @@ WORKDIR /
 
 ADD island.jar island.jar
 
-CMD java - jar island.jar
+CMD ["java","-jar","/island.jar"]
