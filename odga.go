@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
@@ -12,14 +13,6 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
 )
-
-// type ParetoFront struct {
-// 	Fields []float64
-// }
-
-// type JsonType struct {
-// 	Array []ParetoFront
-// }
 
 /**
 REST API expose: http://gaserver-svc.default.svc.cluster.local:9090
@@ -52,7 +45,13 @@ func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
 	islandID := vars["name"]
-	fmt.Println(islandID, httpReq.Body)
+
+	body, _ := ioutil.ReadAll(httpReq.Body)
+	fmt.Println("Received push request, id=", islandID, "body:", body)
+
+	httpResp.Header().Add("Content-Type", "application/json")
+	httpResp.WriteHeader(200)
+	fmt.Fprintf(httpResp, "%s", body)
 }
 
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
