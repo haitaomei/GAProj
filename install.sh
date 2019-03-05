@@ -3,9 +3,10 @@
 source config.sh
 
 # generate deployment for islands
-for i in {1..2}
+i=1
+while [ $i -le $numberOfIlands ]
 do
-    cat <<EOF >>gaproject/templates/island$i.yaml
+  cat <<EOF >>gaproject/templates/island$i.yaml
 ---
 apiVersion: v1
 kind: Pod
@@ -19,6 +20,8 @@ spec:
     - name: ISLAND_ID
       value: "$i"
 EOF
+
+  i=$(( $i + 1 ))
 done
 
 # install the project into kubernetes
