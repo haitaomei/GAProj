@@ -10,4 +10,8 @@ GOOS=linux go build
 docker build -f Dockerfile.gaproj -t ${gaProjectDockerIamge}:latest .
 docker push ${gaProjectDockerIamge}:latest
 
+# build island container
+docker build -f Dockerfile.island -t ${islandDockerIamge}:latest .
+docker push ${islandDockerIamge}:latest
+
 rm -rf GAProj

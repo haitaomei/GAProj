@@ -15,7 +15,7 @@ metadata:
 spec:
   containers:
   - name: ga-island-$i
-    image: redis
+    image: {{ .Values.islanddockerimage }}
     env:
     - name: ISLAND_ID
       value: "$i"
