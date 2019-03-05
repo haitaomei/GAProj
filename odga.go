@@ -19,14 +19,16 @@ to debug locally
 */
 
 var client *redis.Client
+var res string
 
 func main() {
 	// init db
-	client = redis.NewClient(&redis.Options{
-		Addr:     "redis-master.default.svc.cluster.local:6379",
-		Password: "",
-		DB:       1,
-	})
+	// client = redis.NewClient(&redis.Options{
+	// 	Addr:     "redis-master.default.svc.cluster.local:6379",
+	// 	Password: "",
+	// 	DB:       1,
+	// })
+
 	router := mux.NewRouter()
 
 	rootRouter := router.PathPrefix("/").Subrouter()
@@ -56,12 +58,12 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 
 	body, _ := ioutil.ReadAll(httpReq.Body)
 	fmt.Println("Received push request, going to save into db\n\tid=", islandID, "body:", body)
-
+	res = string(body)
 	//save to db
-	err := client.Set(islandID, body, 0).Err()
-	if err != nil {
-		fmt.Println(err)
-	}
+	// err := client.Set(islandID, body, 0).Err()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// }
 }
 
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
@@ -69,14 +71,17 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 	fmt.Println("Received poll request, going to save into db\n\tid=", islandID)
 	//read from db
-	val2, err := client.Get(islandID).Result()
-	if err == redis.Nil {
-		fmt.Println("key2 does not exist")
-	} else if err != nil {
-		fmt.Println(err)
-	} else {
-		httpResp.Header().Add("Content-Type", "application/json")
-		httpResp.WriteHeader(200)
-		fmt.Fprintf(httpResp, "%s", val2)
-	}
+	// val2, err := client.Get(islandID).Result()
+	// if err == redis.Nil {
+	// 	fmt.Println("key2 does not exist")
+	// } else if err != nil {
+	// 	fmt.Println(err)
+	// } else {
+	// 	httpResp.Header().Add("Content-Type", "application/json")
+	// 	httpResp.WriteHeader(200)
+	// 	fmt.Fprintf(httpResp, "%s", val2)
+	// }
+	httpResp.Header().Add("Content-Type", "application/json")
+	httpResp.WriteHeader(200)
+	fmt.Fprintf(httpResp, "%s", res)
 }
