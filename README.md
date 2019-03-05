@@ -5,6 +5,7 @@ Install CLI Tools (kubetcl, and Helm)
 1. [kubetcl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-with-homebrew-on-macos)
 2. [Helm](https://helm.sh/docs/using_helm/#installing-helm)
 
+
 Install Docker
 ======
 See https://docs.docker.com/install/
@@ -12,6 +13,8 @@ See https://docs.docker.com/install/
 Create a Kubernetes clsuter in IBM Kubernetes Service, and install CLI according to the instructions
 ======
 After the cluster online, and setting up the CLI, then type `helm init` to initialise Helm.
+
+Note: if you want to run locally on MacOS, please install and start minikube using `localKube_MacOS.sh`
 
 
 Install Project into Kubernetes Cluster
