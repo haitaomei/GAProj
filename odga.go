@@ -13,19 +13,30 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// type ParetoFront struct {
+// 	Fields []float64
+// }
+
+// type JsonType struct {
+// 	Array []ParetoFront
+// }
+
 /**
 REST API expose: http://gaserver-svc.default.svc.cluster.local:9090
 */
 func main() {
-	testRedis()
+	// testRedis()
 
 	router := mux.NewRouter()
 
 	rootRouter := router.PathPrefix("/").Subrouter()
 	rootRouter.HandleFunc("/", rootHandler).Methods("GET")
 
-	helloRouter := router.PathPrefix("/helloAPI").Subrouter()
-	helloRouter.HandleFunc("/{name}", helloHandler).Methods("GET")
+	pushRouter := router.PathPrefix("/push").Subrouter()
+	pushRouter.HandleFunc("/{name}", pushHandler).Methods("POST")
+
+	pollRouter := router.PathPrefix("/poll").Subrouter()
+	pollRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 
 	http.Handle("/", router)
 	http.ListenAndServe(":9090", nil) //standard http
@@ -38,14 +49,16 @@ func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	json.NewEncoder(httpResp).Encode("Welcome to the root directory ...")
 }
 
-func helloHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
-	username := vars["name"]
-	var responseText = "Hi " + username + ", how are you?"
+	islandID := vars["name"]
+	fmt.Println(islandID, httpReq.Body)
+}
 
-	httpResp.Header().Add("Content-Type", "application/json")
-	httpResp.WriteHeader(200)
-	json.NewEncoder(httpResp).Encode(responseText)
+func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+	vars := mux.Vars(httpReq)
+	islandID := vars["name"]
+	fmt.Println(islandID)
 }
 
 /*
