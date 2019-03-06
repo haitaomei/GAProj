@@ -94,22 +94,25 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	}
 }
 
+// tracking all the islands, dummy implementation
 func updateAllIslandIDs(islandID string) {
-	// tracking all the islands
-
-	if len(islands) == 0 {
-		records, err := client.Get(islandID).Result()
-		if err == nil {
-			islands = strings.Split(records, ";")
-		}
+	islandsInDB := make([]string, 0)
+	records, err := client.Get(islandID).Result()
+	if err == nil {
+		islandsInDB = strings.Split(records, ";")
 	}
 
-	for _, s := range islands {
-		if s == islandID {
-			return
+	if len(islandsInDB) > 0 {
+		existing := make(map[string]bool)
+		for _, s := range islands {
+			existing[s] = true
+		}
+		for _, s := range islandsInDB {
+			if !existing[s] {
+				islands = append(islands, s)
+			}
 		}
 	}
-
 	islands = append(islands, islandID)
 	// write into redis
 	record := ""
