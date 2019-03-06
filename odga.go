@@ -146,5 +146,5 @@ func updateAllIslandIDs(islandID string) {
 	}
 	client.Set("AllIsLands", record, 0).Err()
 
-	fmt.Println("\t- All islands recored:", record)
+	fmt.Println("\t- All islands recorded:", record)
 }
