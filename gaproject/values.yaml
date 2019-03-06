@@ -1,5 +1,6 @@
 redis:
   redisreplica: 6
 
+gaserverreplica: 2
 gaserverdockerimage: "zs1517/gasrv:latest"
 islanddockerimage: "zs1517/gaisland:latest"

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: gaserver
 spec:
-  replicas: 1
+  replicas: {{ .Values.gaserverreplica }}
   selector:
     matchLabels:
       app-name: gaserver

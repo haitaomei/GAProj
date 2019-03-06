@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
+	"strings"
 
 	"github.com/go-redis/redis"
 	"github.com/gorilla/mux"
@@ -63,21 +65,56 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	updateAllIslandIDs(islandID)
 }
 
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
 	islandID := vars["name"]
 	fmt.Println("Received a poll request, id=", islandID)
+
+	//random select one island
+	updateAllIslandIDs(islandID)
+	count := len(islands)
+	selected := rand.Intn(count)
+	if islands[selected] == islandID {
+		selected = (selected + 1) % count
+	}
+
 	//read from db
-	val2, err := client.Get(islandID).Result()
+	res, err := client.Get(islands[selected]).Result()
 	if err == redis.Nil {
-		fmt.Println(islandID, " does not exist")
+		fmt.Println(islands[selected], " does not exist")
 	} else if err != nil {
 		fmt.Println(err)
 	} else {
 		httpResp.Header().Add("Content-Type", "application/json")
 		httpResp.WriteHeader(200)
-		fmt.Fprintf(httpResp, "%s", val2)
+		fmt.Fprintf(httpResp, "%s", res)
 	}
+}
+
+func updateAllIslandIDs(islandID string) {
+	// tracking all the islands
+
+	if len(islands) == 0 {
+		records, err := client.Get(islandID).Result()
+		if err == nil {
+			islands = strings.Split(records, ";")
+		}
+	}
+
+	for _, s := range islands {
+		if s == islandID {
+			return
+		}
+	}
+
+	islands = append(islands, islandID)
+	// write into redis
+	record := ""
+	for _, s := range islands {
+		record += (s + ";")
+	}
+	client.Set("AllIsLands", record, 0).Err()
 }
