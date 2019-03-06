@@ -41,10 +41,13 @@ func main() {
 
 	pollRouter := router.PathPrefix("/poll").Subrouter()
 	pollRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
+	/* alia for poll */
+	pullRouter := router.PathPrefix("/pull").Subrouter()
+	pullRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 
 	http.Handle("/", router)
+	fmt.Println("* Server started, listening on http")
 	http.ListenAndServe(":9090", nil)
-
 }
 
 func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
@@ -59,7 +62,7 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 
 	body, _ := ioutil.ReadAll(httpReq.Body)
-	fmt.Println("Received a push request, going to save into db\tid=", islandID, "body:", body)
+	fmt.Println("* Push request, going to save into db.\tID =", islandID, "body:", body)
 	// save to db
 	err := client.Set(islandID, string(body), 0).Err()
 	if err != nil {
@@ -71,20 +74,28 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	vars := mux.Vars(httpReq)
 	islandID := vars["name"]
-	fmt.Println("Received a poll request, id=", islandID)
+	fmt.Println("* Pull request, ID =", islandID)
 
 	//random select one island
 	updateAllIslandIDs(islandID)
 	count := len(islands)
-	selected := rand.Intn(count)
-	if islands[selected] == islandID {
-		selected = (selected + 1) % count
+	selectedIsland := islandID
+	for i := 1; i <= 10; i++ {
+		selected := rand.Intn(count)
+		if islands[selected] == islandID {
+			selected = (selected + 1) % count
+		}
+		if islands[selected] != "" {
+			selectedIsland = islands[selected]
+			break
+		}
 	}
 
+	fmt.Println("\t- randomly selected island:", selectedIsland)
 	//read from db
-	res, err := client.Get(islands[selected]).Result()
+	res, err := client.Get(selectedIsland).Result()
 	if err == redis.Nil {
-		fmt.Println(islands[selected], " does not exist")
+		fmt.Println(selectedIsland, " does not exist")
 	} else if err != nil {
 		fmt.Println(err)
 	} else {
@@ -97,7 +108,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 // tracking all the islands, dummy implementation
 func updateAllIslandIDs(islandID string) {
 	islandsInDB := make([]string, 0)
-	records, err := client.Get(islandID).Result()
+	records, err := client.Get("AllIsLands").Result()
 	if err == nil {
 		islandsInDB = strings.Split(records, ";")
 	}
@@ -108,16 +119,32 @@ func updateAllIslandIDs(islandID string) {
 			existing[s] = true
 		}
 		for _, s := range islandsInDB {
-			if !existing[s] {
+			if s != "" && !existing[s] {
 				islands = append(islands, s)
 			}
 		}
 	}
-	islands = append(islands, islandID)
+
+	// appending current island
+	needAppend := true
+	for _, s := range islands {
+		if s == islandID {
+			needAppend = false
+			break
+		}
+	}
+	if needAppend {
+		islands = append(islands, islandID)
+	}
+
 	// write into redis
 	record := ""
 	for _, s := range islands {
-		record += (s + ";")
+		if s != "" {
+			record += (s + ";")
+		}
 	}
 	client.Set("AllIsLands", record, 0).Err()
+
+	fmt.Println("\t- All islands recored:", record)
 }
