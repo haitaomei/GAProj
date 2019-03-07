@@ -1,4 +1,5 @@
-
-gaserverreplica: 1      # this will be auto set by install.sh
-gaserverdockerimage: "" # this will be auto set by install.sh
-islanddockerimage: ""   # this will be auto set by install.sh
+# These values will be auto set by install.sh
+gaserverreplica: 1      
+gaserverdockerimage: ""
+islanddockerimage: ""
+domain: ""

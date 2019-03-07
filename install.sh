@@ -29,6 +29,7 @@ ARG=""
 ARG="${ARG} --set gaserverdockerimage=${gaProjectDockerIamge}:latest"
 ARG="${ARG} --set islanddockerimage=${islandDockerIamge}:latest"
 ARG="${ARG} --set gaserverreplica=${gaserverreplica}"
+ARG="${ARG} --set domain=${ingressDomain}"
 # install the project into kubernetes
 helm install --name ga-project ${ARG} gaproject
 
