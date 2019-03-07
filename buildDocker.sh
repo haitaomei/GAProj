@@ -14,4 +14,7 @@ docker push ${gaProjectDockerIamge}:latest
 docker build -f Dockerfile.island -t ${islandDockerIamge}:latest .
 docker push ${islandDockerIamge}:latest
 
+docker rmi ${gaProjectDockerIamge}:latest
+docker rmi ${islandDockerIamge}:latest
+
 rm -rf GAProj

@@ -45,8 +45,8 @@ func main() {
 	pullRouter := router.PathPrefix("/pull").Subrouter()
 	pullRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 
-	getAllIslandsRouter := router.PathPrefix("/allisland").Subrouter()
-	getAllIslandsRouter.HandleFunc("/", getAllIslandsHandler).Methods("GET")
+	getAllIslandsRouter := router.PathPrefix("/allislands").Subrouter()
+	getAllIslandsRouter.HandleFunc("", getAllIslandsHandler).Methods("GET")
 
 	http.Handle("/", router)
 	fmt.Println("* Server started, listening on http")
@@ -79,7 +79,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 	fmt.Println("* Pull request, ID =", islandID)
 
-	//random select one island
+	// random select one island
 	updateAllIslandIDs(islandID)
 	count := len(islands)
 	selectedIsland := islandID
@@ -95,7 +95,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	}
 
 	fmt.Println("\t- randomly selected island:", selectedIsland)
-	//read from db
+	// read from db
 	res, err := client.Get(selectedIsland).Result()
 	if err == redis.Nil {
 		fmt.Println(selectedIsland, " does not exist")
@@ -104,6 +104,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	} else {
 		httpResp.Header().Add("Content-Type", "application/json")
 		httpResp.WriteHeader(200)
+		// do not use json encoder here again, because we saved the data without decode
 		fmt.Fprintf(httpResp, "%s", res)
 	}
 }
@@ -166,7 +167,5 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 			record += ctent
 		}
 	}
-	httpResp.Header().Add("Content-Type", "application/json")
-	httpResp.WriteHeader(200)
 	fmt.Fprintf(httpResp, "%s", record)
 }
