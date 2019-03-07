@@ -45,6 +45,9 @@ func main() {
 	pullRouter := router.PathPrefix("/pull").Subrouter()
 	pullRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 
+	getAllIslandsRouter := router.PathPrefix("/allisland").Subrouter()
+	getAllIslandsRouter.HandleFunc("/", getAllIslandsHandler).Methods("GET")
+
 	http.Handle("/", router)
 	fmt.Println("* Server started, listening on http")
 	http.ListenAndServe(":9090", nil)
@@ -107,24 +110,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 
 // tracking all the islands, dummy implementation
 func updateAllIslandIDs(islandID string) {
-	islandsInDB := make([]string, 0)
-	records, err := client.Get("AllIsLands").Result()
-	if err == nil {
-		islandsInDB = strings.Split(records, ";")
-	}
-
-	if len(islandsInDB) > 0 {
-		existing := make(map[string]bool)
-		for _, s := range islands {
-			existing[s] = true
-		}
-		for _, s := range islandsInDB {
-			if s != "" && !existing[s] {
-				islands = append(islands, s)
-			}
-		}
-	}
-
+	refreshCurRecords()
 	// appending current island
 	needAppend := true
 	for _, s := range islands {
@@ -147,4 +133,41 @@ func updateAllIslandIDs(islandID string) {
 	client.Set("AllIsLands", record, 0).Err()
 
 	fmt.Println("\t- All islands recorded:", record)
+}
+
+func refreshCurRecords() {
+	islandsInDB := make([]string, 0)
+	records, err := client.Get("AllIsLands").Result()
+	if err == nil {
+		islandsInDB = strings.Split(records, ";")
+	}
+
+	if len(islandsInDB) > 0 {
+		existing := make(map[string]bool)
+		for _, s := range islands {
+			existing[s] = true
+		}
+		for _, s := range islandsInDB {
+			if s != "" && !existing[s] {
+				islands = append(islands, s)
+			}
+		}
+	}
+}
+
+func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+	record += "==========All the records of islands till now===========\n"
+	refreshCurRecords()
+	record := ""
+	for _, s := range islands {
+		if s != "" {
+			record += "\n---------------------------\n"
+			record += ("Island ID: " + s + "\nContent:\n")
+			ctent, _ := client.Get(s).Result()
+			record += ctent
+		}
+	}
+	httpResp.Header().Add("Content-Type", "application/json")
+	httpResp.WriteHeader(200)
+	fmt.Fprintf(httpResp, "%s", record)
 }
