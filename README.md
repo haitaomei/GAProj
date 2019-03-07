@@ -17,6 +17,17 @@ After the cluster online, and setting up the CLI, then type `helm init` to initi
 Note: if you want to run locally on MacOS, please install and start minikube using `localKube_MacOS.sh`
 
 
+
+Build Docker images (Optional)
+======
+Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
+
+Move the directory of this project into your $GOPATH/src/
+
+Run `buildDocker.sh`
+
+
+
 Install Project into Kubernetes Cluster
 ======
 Run `install.sh`
@@ -42,21 +53,10 @@ Wait all redis container online, then type
 
 to set up the redis cluster.
 
-By default, there will be 3 master nodes, and 3 slave nodes. Config `gaproj/values.yaml` to configure the total number of instances.
+By default, there will be 3 master nodes, and 3 slave nodes.
 
 Exported service url is `redis-cluster.default.svc.cluster.local:6379` -->
 
 Delete Project from Kubernetes Cluster
 ======
 Run `cleanup.sh`
-
-
-
-
-Build Docker images (Optional)
-======
-Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
-
-Move the directory of this project into your $GOPATH/src/
-
-Run `buildDocker.sh`
