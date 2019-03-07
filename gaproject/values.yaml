@@ -1,6 +1,4 @@
-redis:
-  redisreplica: 6
 
-gaserverreplica: 2
-gaserverdockerimage: "zs1517/gasrv:latest"
-islanddockerimage: "zs1517/gaisland:latest"
+gaserverreplica: 1      # this will be auto set by install.sh
+gaserverdockerimage: "" # this will be auto set by install.sh
+islanddockerimage: ""   # this will be auto set by install.sh

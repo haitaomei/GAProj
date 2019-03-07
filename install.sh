@@ -24,8 +24,13 @@ EOF
   i=$(( $i + 1 ))
 done
 
+
+ARG=""
+ARG="${ARG} --set gaserverdockerimage=${gaProjectDockerIamge}:latest"
+ARG="${ARG} --set islanddockerimage=${islandDockerIamge}:latest"
+ARG="${ARG} --set gaserverreplica=${gaserverreplica}"
 # install the project into kubernetes
-helm install --name ga-project gaproject
+helm install --name ga-project ${ARG} gaproject
 
 # delete tmp files
 rm -rf gaproject/templates/island*
