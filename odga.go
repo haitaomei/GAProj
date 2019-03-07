@@ -156,9 +156,8 @@ func refreshCurRecords() {
 }
 
 func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
-	record += "==========All the records of islands till now===========\n"
+	record := "==========All the records of islands till now===========\n"
 	refreshCurRecords()
-	record := ""
 	for _, s := range islands {
 		if s != "" {
 			record += "\n---------------------------\n"
