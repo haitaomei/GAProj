@@ -49,7 +49,7 @@ func main() {
 	getAllIslandsRouter.HandleFunc("", getAllIslandsHandler).Methods("GET")
 
 	http.Handle("/", router)
-	fmt.Println("* Server started, listening on http")
+	fmt.Println("* Elastic GA Data Tier Server is starting... (listening on http)")
 	http.ListenAndServe(":9090", nil)
 }
 

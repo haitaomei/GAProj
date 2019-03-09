@@ -16,16 +16,13 @@ After the cluster online, and setting up the CLI, then type `helm init` to initi
 
 Note: if you want to run locally on MacOS, please install and start minikube using `localKube_MacOS.sh`
 
-
-
-Build Docker images (Optional)
+Config
 ======
 Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
 
-Move the directory of this project into your $GOPATH/src/
-
+Build Docker images (Optional)
+======
 Run `buildDocker.sh`
-
 
 
 Install Project into Kubernetes Cluster
