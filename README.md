@@ -1,12 +1,12 @@
 # GAProj
 
-1. Install CLI Tools (kubetcl, and Helm)
+1.Install CLI Tools (kubetcl, and Helm)
 ======
 * [kubetcl](https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-with-homebrew-on-macos)
 * [Helm](https://helm.sh/docs/using_helm/#installing-helm)
 
 
-2. Install Docker
+2.Install Docker
 ======
 See https://docs.docker.com/install/
 
@@ -18,16 +18,16 @@ Or if you want to run locally on MacOS, please install and start minikube using 
 
 **After** the cluster online, and setting up the CLI, then type `helm init` to initialise Helm.
 
-3. Config
+3.Config
 ======
 Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
 
-4. (Optional) Build Docker images 
+4.(Optional) Build Docker images 
 ======
 Run `buildDocker.sh`
 
 
-5. Install Project into Kubernetes Cluster
+5.Install Project into Kubernetes Cluster
 ======
 Run `install.sh`
 
