@@ -18,11 +18,11 @@ Create a Kubernetes cluster in IBM Kubernetes Service, and install CLI according
 
 Or if you want to run locally on MacOS, please install and start minikube using `localKube_MacOS.sh`
 
-**After** the cluster online, and setting up the CLI, then type `helm init` to initialise Helm.
+**After** the cluster online, and setting up Helm by typing `helm init`.
 
 4.Config
 ======
-Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username and password etc.
+Copy `config.sh.tpl` to `config.sh`, configure your docker hub's username, password, docker image names etc.
 
 5.(Optional) Build Docker images 
 ======
