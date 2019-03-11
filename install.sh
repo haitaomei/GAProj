@@ -16,6 +16,7 @@ spec:
   containers:
   - name: ga-island-$i
     image: {{ .Values.islanddockerimage }}
+    imagePullPolicy: Always
     env:
     - name: ISLAND_ID
       value: "$i"

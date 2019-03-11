@@ -21,6 +21,7 @@ spec:
             memory: "256Mi"
             cpu: "200m"
         image: {{ .Values.gaserverdockerimage }}
+        imagePullPolicy: Always
         ports:
         - containerPort: 9090
 ---
