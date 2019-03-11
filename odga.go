@@ -86,8 +86,7 @@ func pushObjectiveHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	body, _ := ioutil.ReadAll(httpReq.Body)
 	fmt.Println("* Push request, going to save into db.\tID =", islandID) //, "body:", body
 	// save to db
-	islandID += "_Objective_Key"
-	err := client.Set(islandID, string(body), 0).Err()
+	err := client.Set(islandID+"_Objective_Key", string(body), 0).Err()
 	if err != nil {
 		fmt.Println(err)
 	}
