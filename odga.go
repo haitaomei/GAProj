@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"math/rand"
 	"net/http"
 	"strings"
@@ -51,7 +52,7 @@ func main() {
 
 	http.Handle("/", router)
 	fmt.Println("* Elastic GA Data Tier Server is starting... (listening on http)")
-	http.ListenAndServe(":9090", nil)
+	log.Fatal(http.ListenAndServe(":9090", nil))
 }
 
 func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
