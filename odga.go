@@ -193,6 +193,7 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		if s != "" {
 			ctent, _ := client.Get(s + "_Objective_Key").Result()
 			record += ctent
+			record += "\n"
 		}
 	}
 	fmt.Fprintf(httpResp, "%s", record)
