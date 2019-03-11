@@ -41,6 +41,9 @@ func main() {
 	pushRouter := router.PathPrefix("/push").Subrouter()
 	pushRouter.HandleFunc("/{name}", pushHandler).Methods("POST")
 
+	pushObjectiveRouter := router.PathPrefix("/pushobject").Subrouter()
+	pushObjectiveRouter.HandleFunc("/{name}", pushObjectiveHandler).Methods("POST")
+
 	pollRouter := router.PathPrefix("/poll").Subrouter()
 	pollRouter.HandleFunc("/{name}", pollHandler).Methods("POST")
 	/* alia for poll */
@@ -69,6 +72,21 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	body, _ := ioutil.ReadAll(httpReq.Body)
 	fmt.Println("* Push request, going to save into db.\tID =", islandID, "body:", body)
 	// save to db
+	err := client.Set(islandID, string(body), 0).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
+	updateAllIslandIDs(islandID)
+}
+
+func pushObjectiveHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
+	vars := mux.Vars(httpReq)
+	islandID := vars["name"]
+
+	body, _ := ioutil.ReadAll(httpReq.Body)
+	fmt.Println("* Push request, going to save into db.\tID =", islandID) //, "body:", body
+	// save to db
+	islandID += "_Objective_Key"
 	err := client.Set(islandID, string(body), 0).Err()
 	if err != nil {
 		fmt.Println(err)
@@ -165,6 +183,7 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		if s != "" {
 			record += "\n---------------------------\n"
 			record += ("Island ID: " + s + "\nContent:\n")
+			s += "_Objective_Key"
 			ctent, _ := client.Get(s).Result()
 			record += ctent
 		}
