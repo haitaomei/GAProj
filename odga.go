@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/go-redis/redis"
@@ -177,13 +178,20 @@ func refreshCurRecords() {
 
 func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	record := "==========All the records of islands till now===========\n"
+	record += "-------------Islands List--------------\n"
 	refreshCurRecords()
-	for _, s := range islands {
+	islandsRecords := make([]string)
+	copy(islandsRecords, islands)
+	sort.Strings(islandsRecords)
+	for _, s := range islandsRecords {
 		if s != "" {
-			record += "\n---------------------------\n"
-			record += ("Island ID: " + s + "\nContent:\n")
-			s += "_Objective_Key"
-			ctent, _ := client.Get(s).Result()
+			record += ("Island ID: " + s + "\n")
+		}
+	}
+	record += "\n-------------Contents--------------\n"
+	for _, s := range islandsRecords {
+		if s != "" {
+			ctent, _ := client.Get(s + "_Objective_Key").Result()
 			record += ctent
 		}
 	}
