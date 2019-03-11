@@ -180,7 +180,7 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	record := "==========All the records of islands till now===========\n"
 	record += "-------------Islands List--------------\n"
 	refreshCurRecords()
-	islandsRecords := make([]string)
+	islandsRecords := make([]string, len(islands))
 	copy(islandsRecords, islands)
 	sort.Strings(islandsRecords)
 	for _, s := range islandsRecords {
