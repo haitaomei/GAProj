@@ -30,6 +30,7 @@ func main() {
 		Password: "",
 		DB:       1,
 	})
+	connectRedis()
 
 	router := mux.NewRouter()
 
@@ -168,4 +169,15 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		}
 	}
 	fmt.Fprintf(httpResp, "%s", record)
+}
+
+func connectRedis() {
+	for true {
+		err := client.Set("RedisConnection", "Connected", 0).Err()
+		if err != nil {
+			fmt.Println("Waitting to connect to Redis...", err)
+		} else {
+			break
+		}
+	}
 }
