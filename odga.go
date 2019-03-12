@@ -200,13 +200,32 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 			err := json.NewDecoder(strings.NewReader(objectiveData)).Decode(&od)
 			if err == nil {
 				fmt.Printf("%+v\n", od)
+				objStr := ""
+				for _, list := range od.List {
+					for _, v := range list {
+						objStr += fmt.Sprintf("%f, ", v)
+					}
+					objStr += "\n"
+				}
+				objStr += "\n"
+				record += objStr
 			} else {
 				fmt.Println(err, objectiveData)
 			}
+			record += "\n"
+		}
+	}
+
+	record += "\n-------------Raw Contents--------------\n"
+	for _, s := range islandsRecords {
+		if s != "" {
+			objectiveData, _ := client.Get(s + "_Objective_Key").Result()
+			record += ("\n---------------------------\nIsland ID: " + s + "\n")
 			record += objectiveData
 			record += "\n"
 		}
 	}
+	record += "\n"
 	fmt.Fprintf(httpResp, "%s", record)
 }
 
