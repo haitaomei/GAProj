@@ -60,7 +60,7 @@ func main() {
 
 	http.Handle("/", router)
 	fmt.Println("* Elastic GA Data Tier Server is starting... (listening on http)")
-	log.Fatal(http.ListenAndServe(":9090", nil))
+	log.Fatal(http.ListenAndServe(":9090", nil), "server has been started")
 }
 
 func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
@@ -197,7 +197,8 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		if s != "" {
 			objectiveData, _ := client.Get(s + "_Objective_Key").Result()
 			od := objective{}
-			err := json.Unmarshal([]byte(objectiveData), &od)
+			// err := json.Unmarshal([]byte(objectiveData), &od)
+			err := json.NewDecoder(strings.NewReader(objectiveData)).Decode(&od)
 			if err == nil {
 				fmt.Printf("%+v\n", od)
 			} else {
