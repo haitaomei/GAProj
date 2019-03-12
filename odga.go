@@ -197,7 +197,6 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		if s != "" {
 			objectiveData, _ := client.Get(s + "_Objective_Key").Result()
 			od := objective{}
-			// err := json.Unmarshal([]byte(objectiveData), &od)
 			err := json.NewDecoder(strings.NewReader(objectiveData)).Decode(&od)
 			if err == nil {
 				fmt.Printf("%+v\n", od)
