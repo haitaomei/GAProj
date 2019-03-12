@@ -26,7 +26,7 @@ var client *redis.Client
 var islands = make([]string, 0)
 
 type objective struct {
-	List [][]float64 `json:"list"`
+	List [][]float64 //`json:"list"`
 }
 
 func main() {
