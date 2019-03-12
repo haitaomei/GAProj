@@ -25,6 +25,10 @@ to debug locally
 var client *redis.Client
 var islands = make([]string, 0)
 
+type objective struct {
+	List [][]float64 `json:"list"`
+}
+
 func main() {
 	// init db
 	client = redis.NewClient(&redis.Options{
@@ -71,7 +75,7 @@ func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	islandID := vars["name"]
 
 	body, _ := ioutil.ReadAll(httpReq.Body)
-	fmt.Println("* Push request, going to save into db.\tID =", islandID, "body:", body)
+	fmt.Println("* Push request, going to save into db.\tID =", islandID) //, "body:", body
 	// save to db
 	err := client.Set(islandID, string(body), 0).Err()
 	if err != nil {
@@ -191,8 +195,15 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	record += "\n-------------Contents--------------\n"
 	for _, s := range islandsRecords {
 		if s != "" {
-			ctent, _ := client.Get(s + "_Objective_Key").Result()
-			record += ctent
+			objectiveData, _ := client.Get(s + "_Objective_Key").Result()
+			od := objective{}
+			err := json.Unmarshal([]byte(objectiveData), &od)
+			if err == nil {
+				fmt.Printf("%+v\n", od)
+			} else {
+				fmt.Println(err, objectiveData)
+			}
+			record += objectiveData
 			record += "\n"
 		}
 	}
