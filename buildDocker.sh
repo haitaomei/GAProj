@@ -5,7 +5,7 @@ source config.sh
 docker login -u ${userName} -p ${passWd}
 
 # build GAProj request handler
-docker build -f Dockerfile.gaproj -t ${gaProjectDockerIamge}:latest .
+docker build -f Dockerfile.dataservice -t ${gaProjectDockerIamge}:latest .
 docker push ${gaProjectDockerIamge}:latest
 
 # build island container

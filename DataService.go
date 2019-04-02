@@ -67,7 +67,7 @@ func rootHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 
 	httpResp.Header().Add("Content-Type", "application/json")
 	httpResp.WriteHeader(200)
-	json.NewEncoder(httpResp).Encode("Welcome to the root directory ...")
+	_ = json.NewEncoder(httpResp).Encode("Welcome to the root directory ...")
 }
 
 func pushHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
@@ -129,7 +129,7 @@ func pollHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 		httpResp.Header().Add("Content-Type", "application/json")
 		httpResp.WriteHeader(200)
 		// do not use json encoder here again, because we saved the data without decode
-		fmt.Fprintf(httpResp, "%s", res)
+		_, _ = fmt.Fprintf(httpResp, "%s", res)
 	}
 }
 
@@ -152,12 +152,12 @@ func updateAllIslandIDs(islandID string) {
 	record := ""
 	for _, s := range islands {
 		if s != "" {
-			record += (s + ";")
+			record += s + ";"
 		}
 	}
-	client.Set("AllIsLands", record, 0).Err()
+	err := client.Set("AllIsLands", record, 0).Err()
 
-	fmt.Println("\t- All islands recorded:", record)
+	fmt.Println("\t- All islands recorded:", record, err)
 }
 
 func refreshCurRecords() {
@@ -189,7 +189,7 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	sort.Strings(islandsRecords)
 	for _, s := range islandsRecords {
 		if s != "" {
-			record += ("Island ID: " + s + "\n")
+			record += "Island ID: " + s + "\n"
 		}
 	}
 	record += "\n-------------Contents--------------\n"
@@ -220,20 +220,20 @@ func getAllIslandsHandler(httpResp http.ResponseWriter, httpReq *http.Request) {
 	for _, s := range islandsRecords {
 		if s != "" {
 			objectiveData, _ := client.Get(s + "_Objective_Key").Result()
-			record += ("\n---------------------------\nIsland ID: " + s + "\n")
+			record += "\n---------------------------\nIsland ID: " + s + "\n"
 			record += objectiveData
 			record += "\n"
 		}
 	}
 	record += "\n"
-	fmt.Fprintf(httpResp, "%s", record)
+	_, _ = fmt.Fprintf(httpResp, "%s", record)
 }
 
 func connectRedis() {
 	for true {
 		err := client.Set("RedisConnection", "Connected", 0).Err()
 		if err != nil {
-			fmt.Println("Waitting to connect to Redis...", err)
+			fmt.Println("Waiting to connect to Redis...", err)
 		} else {
 			break
 		}
