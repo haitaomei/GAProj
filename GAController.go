@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"k8s.io/client-go/rest"
 	"os"
+
+	"k8s.io/client-go/rest"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,17 +15,17 @@ var kubeClient *kubernetes.Clientset
 
 const nameSpace = "default"
 
-func main() {
-	fmt.Println("Hi")
+// func main() {
+// 	fmt.Println("Hi")
 
-	//init kubernetes client
-	var err error
-	kubeClient, err = initInClusterKubeClient()
-	if err != nil {
-		panic("Can not create kubernetes client...")
-	}
+// 	//init kubernetes client
+// 	var err error
+// 	kubeClient, err = initInClusterKubeClient()
+// 	if err != nil {
+// 		panic("Can not create kubernetes client...")
+// 	}
 
-}
+// }
 
 func initInClusterKubeClient() (*kubernetes.Clientset, error) {
 	config, err := rest.InClusterConfig()
